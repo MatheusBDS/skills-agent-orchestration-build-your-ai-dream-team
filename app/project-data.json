@@ -1,0 +1,36 @@
+{
+  "projects": [
+    {
+      "name": "Customer Onboarding Refresh",
+      "owner": "Maya Chen",
+      "status": "On track",
+      "recentActivity": "Completed the revised welcome flow prototype and shared it for product review.",
+      "priority": "High",
+      "summary": "Make it easier for new customers to reach their first successful setup, with clearer guidance and fewer steps."
+    },
+    {
+      "name": "API Reliability",
+      "owner": "Jordan Lee",
+      "status": "At risk",
+      "recentActivity": "Load testing surfaced a latency regression; the team is narrowing down the affected endpoint.",
+      "priority": "High",
+      "summary": "Improve service resilience and keep API response times predictable during peak traffic."
+    },
+    {
+      "name": "Mobile Release 4.8",
+      "owner": "Priya Nair",
+      "status": "In progress",
+      "recentActivity": "The release candidate is available for QA, with accessibility checks underway.",
+      "priority": "Medium",
+      "summary": "Prepare the next mobile release with the latest account settings improvements and a dependable rollout."
+    },
+    {
+      "name": "Usage Insights",
+      "owner": "Alex Rivera",
+      "status": "On track",
+      "recentActivity": "Dashboard wireframes were reviewed with support and analytics stakeholders.",
+      "priority": "Low",
+      "summary": "Give teams a shared view of product adoption trends while keeping customer data appropriately aggregated."
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A quick, clear view of project progress, ownership, and priorities.">
+    <title>Project Pulse</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="dashboard" aria-labelledby="page-title">
+      <p>TEAM OVERVIEW</p>
+      <h1 id="page-title">Project Pulse</h1>
+      <p>A clear snapshot of what teams are working on, what needs attention, and what comes next.</p>
+      <p id="load-status" role="status" aria-live="polite">Loading projects…</p>
+    </main>
+
+    <script>
+      const dashboard = document.querySelector(".dashboard");
+      const loadStatus = document.querySelector("#load-status");
+      const requiredFields = ["name", "owner", "status", "recentActivity", "priority", "summary"];
+
+      function showError(message) {
+        dashboard.querySelectorAll(".project-card").forEach((card) => card.remove());
+        loadStatus.textContent = message;
+        loadStatus.setAttribute("role", "alert");
+      }
+
+      function normalize(value) {
+        return value.trim().toLowerCase().replace(/\s+/g, "-");
+      }
+
+      function addText(parent, tagName, className, value) {
+        const element = document.createElement(tagName);
+        element.className = className;
+        element.textContent = value;
+        parent.append(element);
+        return element;
+      }
+
+      function renderProject(project) {
+        const card = document.createElement("article");
+        card.className = "project-card";
+        card.setAttribute("aria-labelledby", `project-${project.id}-name`);
+
+        const heading = addText(card, "h2", "project-name", project.name);
+        heading.id = `project-${project.id}-name`;
+        addText(card, "p", "project-owner", `Owner: ${project.owner}`);
+
+        const status = addText(card, "p", "status", `Status: ${project.status}`);
+        status.dataset.status = normalize(project.status);
+
+        const priority = addText(card, "p", "priority", `Priority: ${project.priority}`);
+        priority.dataset.priority = normalize(project.priority);
+
+        addText(card, "p", "project-summary", `Summary: ${project.summary}`);
+        addText(card, "p", "recent-activity", `Recent activity: ${project.recentActivity}`);
+        dashboard.insertBefore(card, loadStatus);
+      }
+
+      async function loadProjects() {
+        try {
+          const response = await fetch("project-data.json");
+          if (!response.ok) {
+            throw new Error(`The project data could not be loaded (HTTP ${response.status}).`);
+          }
+
+          const data = await response.json();
+          if (!data || !Array.isArray(data.projects)) {
+            throw new Error("The project data is invalid: expected a projects array.");
+          }
+
+          const validProjects = data.projects.every((project) =>
+            project &&
+            requiredFields.every((field) =>
+              typeof project[field] === "string" && project[field].trim().length > 0
+            )
+          );
+          if (!validProjects) {
+            throw new Error("The project data is invalid: every project must include all six fields.");
+          }
+
+          if (data.projects.length === 0) {
+            loadStatus.remove();
+            addText(dashboard, "p", "", "No projects to display yet.");
+            return;
+          }
+
+          data.projects.forEach((project, index) => {
+            renderProject({ ...project, id: index });
+          });
+          loadStatus.remove();
+        } catch (error) {
+          showError(error instanceof Error ? error.message : "Projects could not be loaded. Please try again later.");
+        }
+      }
+
+      loadProjects();
+    </script>
+  </body>
+</html>
